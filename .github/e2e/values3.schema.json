@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "required": [
+    "pullPolicy",
+    "name"
+  ],
+  "properties": {
+    "pullPolicy": {
+      "type": [
+        "string",
+        "boolean",
+        "number",
+        "object",
+        "array"
+      ],
+      "enum": [
+        "IfNotPresent",
+        "Always",
+        "Never"
+      ],
+      "title": "Specifies whether a container image should be created",
+      "default": "IfNotPresent"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^(.*)\\?$",
+      "title": "Application name validated by a regex",
+      "default": "IfNotPresent"
+    }
+  }
+}

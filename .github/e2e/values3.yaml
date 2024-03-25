@@ -1,0 +1,4 @@
+# @param {enum{IfNotPresent,Always,Never}} pullPolicy Specifies whether a container image should be created
+pullPolicy: IfNotPresent
+# @param {regex{^(.*)\?$}} name Application name validated by a regex
+name: IfNotPresent
