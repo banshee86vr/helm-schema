@@ -368,4 +368,16 @@ securityContext:
 
 # @params {string[]} command List of parameters for the default entrypoint
 command: []
+
+# @param {enum{IfNotPresent,Always,Never}} pullPolicy Specifies whether a container image should be created
+pullPolicy: IfNotPresent
+
+# @param {pattern{^.*$}} name Application name validated by a pattern
+name: JSONSchemaGenerator
+
+# @param {integer{min=0,max=5}} replicaCount Number of possible replica with a fixed range
+replicaCount: 3
+
+# @param {string{minLength=10,maxLength=15}} username Username with limited length range
+username: banshee86vr
 `.trim();function gw(){const[e,t]=bt.useState(JSON.stringify(Vb.toJsonSchema(Kb),null,2)),n=r=>{const a=r.target.value;t(JSON.stringify(Vb.toJsonSchema(a),null,2))};return Be.jsxs(Be.Fragment,{children:[Be.jsx(V5,{customHref:"https://github.com/socialgouv/helm-schema"}),Be.jsx("h1",{children:"helm-schema demo"}),Be.jsxs("p",{children:["Annotate your HELM values.yaml files with"," ",Be.jsx("a",{href:"https://devhints.io/jsdoc",target:"_blank",rel:"noopener noreferrer",children:"JSDoc comments"})," ","and extract a values.schema.json -"," ",Be.jsx("a",{href:"https://github.com/socialgouv/helm-schema",target:"_blank",rel:"noopener noreferrer",children:"cf Documentation."})]}),Be.jsxs("div",{style:{display:"flex",width:"100%"},children:[Be.jsxs("div",{style:{flex:"1 0 auto",textAlign:"left",width:"50%",margin:5},children:[Be.jsx("div",{style:{textAlign:"center"},children:"values.yaml"}),Be.jsx(jb,{"data-color-mode":"light",language:"yaml",value:Kb,onChange:n,style:{height:800}})]}),Be.jsxs("div",{style:{flex:"1 0 auto",textAlign:"left",width:"50%",margin:5},children:[Be.jsx("div",{style:{textAlign:"center"},children:"values.schema.json"}),Be.jsx(jb,{"data-color-mode":"light",language:"json",value:e,style:{height:800}})]})]})]})}ec.createRoot(document.getElementById("root")).render(Be.jsx(ot.StrictMode,{children:Be.jsx(gw,{})}));
