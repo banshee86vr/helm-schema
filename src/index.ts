@@ -29,8 +29,11 @@ interface ParsedComment {
   isPattern?: boolean;
   pattern?: string;
   isIntegerRange?: boolean;
-  integerMin?: number;
-  integerMax?: number;
+  minimum?: number;
+  maximum?: number;
+  isLengthRange?: boolean;
+  minLength?: number;
+  maxLength?: number;
 }
 
 interface YamlScalar {
@@ -100,14 +103,18 @@ const getCommentsSchema = (
     let isEnum = false;
     let isPattern = false;
     let isIntegerRange = false;
+    let isLengthRange = false;
     let pattern;
     let enumItems : string[] = [];
-    let intMin: number;
-    let intMax: number;
+    let minimum: number;
+    let maximum: number;
+    let minLength: number;
+    let maxLength: number;
     let regexArray = /^(.*)\[\]$/g;
     let regexEnum = /^enum\{(.*)\}$/g;
     let regexPattern = /^pattern\{(.*)\}$/g;
     let regexIntegerRange = /^integer\{min=(\d+),max=(\d+)\}$/g;
+    let regexLengthRange = /^string\{minLength=(\d+),maxLength=(\d+)\}$/g;
 
     if (tag.type) {
 
@@ -122,9 +129,14 @@ const getCommentsSchema = (
         isPattern = true;
       } else if (tag.type.match(regexIntegerRange)) {
         let groups = regexIntegerRange.exec(tag.type);
-        intMin = +groups[1];
-        intMax = +groups[2];
+        minimum = +groups[1];
+        maximum = +groups[2];
         isIntegerRange = true;
+      } else if (tag.type.match(regexLengthRange)) {
+        let groups = regexLengthRange.exec(tag.type);
+        minLength = +groups[1];
+        maxLength = +groups[2];
+        isLengthRange = true;
       } else {
         type = tag.type.replace(/^(.*)$/g, "$1");
       }
@@ -160,8 +172,13 @@ const getCommentsSchema = (
     } else if (isIntegerRange){
       comment.type = "integer" as JSONSchema4TypeName;
       comment.isIntegerRange = true;
-      comment.integerMin = intMin;
-      comment.integerMax = intMax;
+      comment.minimum = minimum;
+      comment.maximum = maximum;
+    } else if (isLengthRange){
+      comment.type = "string" as JSONSchema4TypeName;
+      comment.isLengthRange = true;
+      comment.minLength = minLength;
+      comment.maxLength = maxLength;
     } else {
       if (isExternalref) {
         comment.$ref = type;
@@ -315,8 +332,12 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
     schema.pattern = node.comment?.pattern;
   } else if (node.comment?.isIntegerRange) {
     schema.type = "integer";
-    schema.minimum = node.comment?.integerMin;
-    schema.maximum = node.comment?.integerMax;
+    schema.minimum = node.comment?.minimum;
+    schema.maximum = node.comment?.maximum;
+  } else if (node.comment?.isLengthRange) {
+    schema.type = "string";
+    schema.minLength = node.comment?.minLength;
+    schema.maxLength = node.comment?.maxLength;
   } else if (node.comment?.type) {
     schema.type = node.comment.type;
   }
