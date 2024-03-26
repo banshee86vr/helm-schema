@@ -26,9 +26,9 @@
     },
     "name": {
       "type": "string",
-      "pattern": "^(.*)\\?$",
+      "pattern": "^.*$",
       "title": "Application name validated by a pattern",
-      "default": "IfNotPresent"
+      "default": "JSONSchemaGenerator"
     },
     "replicaCount": {
       "type": "integer",
