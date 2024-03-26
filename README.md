@@ -19,8 +19,8 @@ smtp:
 
 # @param {enum{IfNotPresent,Always,Never}} pullPolicy Specifies whether a container image should be created
 pullPolicy: IfNotPresent
-# @param {pattern{^(.*)\?$}} name Application name validated by a pattern
-name: IfNotPresent
+# @param {pattern{^.*$}} name Application name validated by a pattern
+name: JSONSchemaGenerator
 # @param {integer{min=0,max=5}} replicaCount Number of possible replica with a fixed range
 replicaCount: 3
 # @param {string{minLength=10,maxLength=15}} username Username with limited length range
@@ -54,35 +54,12 @@ You get such JSON schema in result :
   "type": "object",
   "$schema": "http://json-schema.org/draft-07/schema",
   "required": [
-    "smtp",
     "pullPolicy",
     "name",
     "replicaCount",
     "username"
   ],
   "properties": {
-    "smtp": {
-      "type": "object",
-      "title": "Your SMTP setup",
-      "required": [
-        "host"
-      ],
-      "properties": {
-        "host": {
-          "type": [
-            "string"
-          ],
-          "title": "SMTP hostname"
-        },
-        "port": {
-          "type": [
-            "number"
-          ],
-          "title": "SMTP port",
-          "default": "587"
-        }
-      }
-    },
     "pullPolicy": {
       "type": [
         "string",
@@ -101,9 +78,9 @@ You get such JSON schema in result :
     },
     "name": {
       "type": "string",
-      "pattern": "^(.*)\\?$",
+      "pattern": "^.*$",
       "title": "Application name validated by a pattern",
-      "default": "IfNotPresent"
+      "default": "JSONSchemaGenerator"
     },
     "replicaCount": {
       "type": "integer",
