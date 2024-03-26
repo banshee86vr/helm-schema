@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/banshee86vr/helm-schema/compare/v1.0.0...v1.0.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* fix online demo dependencies ([9921a2c](https://github.com/banshee86vr/helm-schema/commit/9921a2cf1abc930fd5ed4a840ce49e31bfa90547))
+
 # 1.0.0 (2024-03-26)
 
 
