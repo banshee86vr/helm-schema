@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/banshee86vr/helm-schema/compare/v1.1.0...v1.2.0) (2024-03-26)
+
+
+### Features
+
+* update README.md ([7e776a8](https://github.com/banshee86vr/helm-schema/commit/7e776a891e5e9f87b538488ab41cf04dbb053261))
+
 # [1.1.0](https://github.com/banshee86vr/helm-schema/compare/v1.0.0...v1.1.0) (2024-03-26)
 
 
