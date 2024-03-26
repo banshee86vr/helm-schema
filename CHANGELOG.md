@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/banshee86vr/helm-schema/compare/v1.2.0...v1.2.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* Fix README about the example with pattern ([65a553c](https://github.com/banshee86vr/helm-schema/commit/65a553c04bf45c3927fc026a884c4d43ee16c005))
+
 # [1.2.0](https://github.com/banshee86vr/helm-schema/compare/v1.1.0...v1.2.0) (2024-03-26)
 
 
