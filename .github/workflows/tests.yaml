@@ -50,10 +50,9 @@ jobs:
           diff values3.json .github/e2e/values3.schema.json
 
       - name: Semantic Release
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/add-package-cicd' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: cycjimmy/semantic-release-action@v3
         with:
-          branch: add-package-cicd
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/exec
