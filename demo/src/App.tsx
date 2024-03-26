@@ -20,6 +20,18 @@ securityContext:
 
 # @params {string[]} command List of parameters for the default entrypoint
 command: []
+
+# @param {enum{IfNotPresent,Always,Never}} pullPolicy Specifies whether a container image should be created
+pullPolicy: IfNotPresent
+
+# @param {pattern{^.*$}} name Application name validated by a pattern
+name: JSONSchemaGenerator
+
+# @param {integer{min=0,max=5}} replicaCount Number of possible replica with a fixed range
+replicaCount: 3
+
+# @param {string{minLength=10,maxLength=15}} username Username with limited length range
+username: banshee86vr
 `.trim();
 
 function App() {
