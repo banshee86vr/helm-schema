@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/banshee86vr/helm-schema/compare/v1.0.0...v1.1.0) (2024-03-26)
+
+
+### Features
+
+* test pipeline ([dacfc79](https://github.com/banshee86vr/helm-schema/commit/dacfc79b6e013a3709bb2479a7353d7e5575d60b))
+
 # 1.0.0 (2024-03-26)
 
 
