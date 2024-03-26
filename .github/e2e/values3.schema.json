@@ -3,7 +3,8 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "required": [
     "pullPolicy",
-    "name"
+    "name",
+    "replicaCount"
   ],
   "properties": {
     "pullPolicy": {
@@ -25,8 +26,15 @@
     "name": {
       "type": "string",
       "pattern": "^(.*)\\?$",
-      "title": "Application name validated by a regex",
+      "title": "Application name validated by a pattern",
       "default": "IfNotPresent"
+    },
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "title": "Number of possible replica with a fixed range",
+      "default": "3"
     }
   }
 }

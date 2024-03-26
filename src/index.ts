@@ -24,10 +24,13 @@ interface ParsedComment {
   $ref?: string;
   required: boolean;
   items?: JSONSchema4Object;
-  enum?: boolean;
+  isEnum?: boolean;
   enumItems?: string[];
-  regex?: boolean;
+  isPattern?: boolean;
   pattern?: string;
+  isIntegerRange?: boolean;
+  integerMin?: number;
+  integerMax?: number;
 }
 
 interface YamlScalar {
@@ -95,21 +98,33 @@ const getCommentsSchema = (
     let type;
     let isArray = false;
     let isEnum = false;
-    let isRegex = false
-    let regex;
+    let isPattern = false;
+    let isIntegerRange = false;
+    let pattern;
     let enumItems : string[] = [];
+    let intMin: number;
+    let intMax: number;
+    let regexArray = /^(.*)\[\]$/g;
+    let regexEnum = /^enum\{(.*)\}$/g;
+    let regexPattern = /^pattern\{(.*)\}$/g;
+    let regexIntegerRange = /^integer\{min=(\d+),max=(\d+)\}$/g;
 
     if (tag.type) {
 
-      if (tag.type.match(/^(.*)\[\]$/g)) {
-        type = tag.type.replace(/^(.*)\[\]$/g, "$1");
+      if (tag.type.match(regexArray)) {
+        type = tag.type.replace(regexArray, "$1");
         isArray = true;
-      } else if (tag.type.match(/^enum\{(.*)\}$/g)) {
-        enumItems = /^enum\{(.*)\}$/g.exec(tag.type)[1].split(",");
+      } else if (tag.type.match(regexEnum)) {
+        enumItems = regexEnum.exec(tag.type)[1].split(",");
         isEnum = true;
-      } else if (tag.type.match(/^regex\{(.*)\}$/g)) {
-        regex = /^regex\{(.*)\}$/g.exec(tag.type)[1];
-        isRegex = true;
+      } else if (tag.type.match(regexPattern)) {
+        pattern = regexPattern.exec(tag.type)[1];
+        isPattern = true;
+      } else if (tag.type.match(regexIntegerRange)) {
+        let groups = regexIntegerRange.exec(tag.type);
+        intMin = +groups[1];
+        intMax = +groups[2];
+        isIntegerRange = true;
       } else {
         type = tag.type.replace(/^(.*)$/g, "$1");
       }
@@ -136,12 +151,17 @@ const getCommentsSchema = (
           (type.replace(/(.*)\?$/, "$1").split(",") as JSONSchema4TypeName[]); // remove question mark
       }
     } else if (isEnum){
-      comment.enum = true;
+      comment.isEnum = true;
       comment.enumItems = enumItems;
-    } else if (isRegex){
+    } else if (isPattern){
       comment.type = "string" as JSONSchema4TypeName;
-      comment.regex = true;
-      comment.pattern = regex;
+      comment.isPattern = true;
+      comment.pattern = pattern;
+    } else if (isIntegerRange){
+      comment.type = "integer" as JSONSchema4TypeName;
+      comment.isIntegerRange = true;
+      comment.integerMin = intMin;
+      comment.integerMax = intMax;
     } else {
       if (isExternalref) {
         comment.$ref = type;
@@ -288,11 +308,15 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
     ...rootProps,
   };
 
-  if (node.comment?.enum) {
+  if (node.comment?.isEnum) {
     schema.enum = node.comment?.enumItems
-  } else if (node.comment?.regex) {
+  } else if (node.comment?.isPattern) {
     schema.type = "string";
     schema.pattern = node.comment?.pattern;
+  } else if (node.comment?.isIntegerRange) {
+    schema.type = "integer";
+    schema.minimum = node.comment?.integerMin;
+    schema.maximum = node.comment?.integerMax;
   } else if (node.comment?.type) {
     schema.type = node.comment.type;
   }
