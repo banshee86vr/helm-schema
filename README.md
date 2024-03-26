@@ -34,13 +34,13 @@ securityContext:
 To generate a JSON schema from your `values.yaml` :
 
 ```sh
-npx @socialgouv/helm-schema -f values.yaml
+npx @bertelli.luca/helm-schema -f values.yaml
 ```
 
 Or via TS :
 
 ```js
-import { toJsonSchema } from "@socialgouv/helm-schema";
+import { toJsonSchema } from "@bertelli.luca/helm-schema";
 
 import yaml from "./values.yaml";
 
