@@ -3,7 +3,8 @@
 [JSON Schema](https://json-schema.org) generator for your [HELM charts](https://helm.sh).
 
 Project forked from: https://github.com/SocialGouv/helm-schema
-Demo : https://socialgouv.github.io/helm-schema
+
+Demo: https://banshee86vr.github.io/helm-schema
 
 ## Usage
 

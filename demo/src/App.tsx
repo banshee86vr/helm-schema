@@ -4,7 +4,7 @@ import CodeEditor from "@uiw/react-textarea-code-editor";
 
 import "./App.css";
 
-import { toJsonSchema } from "@socialgouv/helm-schema";
+import { toJsonSchema } from "@bertelli.luca/helm-schema";
 
 const yaml = `
 # @param {object} smtp Your SMTP setup
@@ -45,7 +45,7 @@ function App() {
   };
   return (
     <>
-      <GithubForkBanner customHref="https://github.com/socialgouv/helm-schema"></GithubForkBanner>
+      <GithubForkBanner customHref="https://github.com/banshee86vr/helm-schema"></GithubForkBanner>
       <h1>helm-schema demo</h1>
       <p>
         Annotate your HELM values.yaml files with{" "}
@@ -58,7 +58,7 @@ function App() {
         </a>{" "}
         and extract a values.schema.json -{" "}
         <a
-          href="https://github.com/socialgouv/helm-schema"
+          href="https://github.com/banshee86vr/helm-schema"
           target="_blank"
           rel="noopener noreferrer"
         >
