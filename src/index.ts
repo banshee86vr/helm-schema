@@ -24,6 +24,10 @@ interface ParsedComment {
   $ref?: string;
   required: boolean;
   items?: JSONSchema4Object;
+  enum?: boolean;
+  enumItems?: string[];
+  regex?: boolean;
+  pattern?: string;
 }
 
 interface YamlScalar {
@@ -90,14 +94,27 @@ const getCommentsSchema = (
 
     let type;
     let isArray = false;
+    let isEnum = false;
+    let isRegex = false
+    let regex;
+    let enumItems : string[] = [];
+
     if (tag.type) {
+
       if (tag.type.match(/^(.*)\[\]$/g)) {
         type = tag.type.replace(/^(.*)\[\]$/g, "$1");
         isArray = true;
+      } else if (tag.type.match(/^enum\{(.*)\}$/g)) {
+        enumItems = /^enum\{(.*)\}$/g.exec(tag.type)[1].split(",");
+        isEnum = true;
+      } else if (tag.type.match(/^regex\{(.*)\}$/g)) {
+        regex = /^regex\{(.*)\}$/g.exec(tag.type)[1];
+        isRegex = true;
       } else {
         type = tag.type.replace(/^(.*)$/g, "$1");
       }
     }
+    
     const isExternalref = type && !!type.match(/^https?:\/\//);
     const name = lastLine?.source[0]?.tokens?.name || tag.name; // check if optiona [name]
 
@@ -118,6 +135,13 @@ const getCommentsSchema = (
           type &&
           (type.replace(/(.*)\?$/, "$1").split(",") as JSONSchema4TypeName[]); // remove question mark
       }
+    } else if (isEnum){
+      comment.enum = true;
+      comment.enumItems = enumItems;
+    } else if (isRegex){
+      comment.type = "string" as JSONSchema4TypeName;
+      comment.regex = true;
+      comment.pattern = regex;
     } else {
       if (isExternalref) {
         comment.$ref = type;
@@ -263,9 +287,16 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
     type: node.comment?.type || detectType(node.value),
     ...rootProps,
   };
-  if (node.comment?.type) {
+
+  if (node.comment?.enum) {
+    schema.enum = node.comment?.enumItems
+  } else if (node.comment?.regex) {
+    schema.type = "string";
+    schema.pattern = node.comment?.pattern;
+  } else if (node.comment?.type) {
     schema.type = node.comment.type;
   }
+
   if (node.comment?.title) {
     schema.title = node.comment.title;
   }
@@ -298,6 +329,7 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
       {}
     );
   }
+
   return schema;
 };
 
