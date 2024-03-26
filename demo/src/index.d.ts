@@ -1,2 +1,2 @@
 declare module "react-github-fork-ribbon";
-declare module "@socialgouv/helm-schema";
+declare module "@bertelli.luca/helm-schema";
