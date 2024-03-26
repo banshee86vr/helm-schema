@@ -1,4 +1,6 @@
 # @param {enum{IfNotPresent,Always,Never}} pullPolicy Specifies whether a container image should be created
 pullPolicy: IfNotPresent
-# @param {regex{^(.*)\?$}} name Application name validated by a regex
+# @param {pattern{^(.*)\?$}} name Application name validated by a pattern
 name: IfNotPresent
+# @param {integer{min=0,max=5}} replicaCount Number of possible replica with a fixed range
+replicaCount: 3
