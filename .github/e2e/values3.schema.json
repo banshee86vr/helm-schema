@@ -4,7 +4,8 @@
   "required": [
     "pullPolicy",
     "name",
-    "replicaCount"
+    "replicaCount",
+    "username"
   ],
   "properties": {
     "pullPolicy": {
@@ -35,6 +36,13 @@
       "maximum": 5,
       "title": "Number of possible replica with a fixed range",
       "default": "3"
+    },
+    "username": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 15,
+      "title": "Username with limited length range",
+      "default": "banshee86vr"
     }
   }
 }
