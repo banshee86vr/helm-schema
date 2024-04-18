@@ -21,6 +21,9 @@ exports[`extractValues: JSDoc with ref array 1`] = `
 [
   {
     "comment": {
+      "arrayDefaults": [
+        "",
+      ],
       "description": "",
       "isArray": true,
       "items": {
@@ -39,6 +42,9 @@ exports[`extractValues: JSDoc with string array 1`] = `
 [
   {
     "comment": {
+      "arrayDefaults": [
+        "",
+      ],
       "description": "",
       "isArray": true,
       "items": {
@@ -316,7 +322,9 @@ exports[`toJsonSchema: JSDoc with ref array 1`] = `
   "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
     "envFrom": {
-      "default": undefined,
+      "default": [
+        "",
+      ],
       "items": {
         "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0/_definitions.json#/definitions/io.k8s.api.core.v1.EnvFromSource",
       },
@@ -335,7 +343,9 @@ exports[`toJsonSchema: JSDoc with string array 1`] = `
   "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
     "command": {
-      "default": undefined,
+      "default": [
+        "",
+      ],
       "items": {
         "type": [
           "string",

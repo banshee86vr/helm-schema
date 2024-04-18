@@ -26,6 +26,7 @@ interface ParsedComment {
   required: boolean;
   items?: JSONSchema4Object;
   isArray?: boolean;
+  arrayDefaults?: string[];
   isEnum?: boolean;
   enumItems?: string[];
   isPattern?: boolean;
@@ -114,11 +115,12 @@ const getCommentsSchema = (
     let isLengthRange = false;
     let pattern: string;
     let enumItems: string[] = [];
+    let arrayDefaults: string[] = [];
     let minimum: number;
     let maximum: number;
     let minLength: number;
     let maxLength: number;
-    const regexArray = /^(.*)\[\]$/g;
+    const regexArray = /^(.*)\[(.*)\]$/g;
     const regexEnum = /^enum\{(.*)\}$/g;
     const regexPattern = /^pattern\{(.*)\}$/g;
     const regexIntegerRange = /^integer\{min=(\d+),max=(\d+)\}$/g;
@@ -127,6 +129,7 @@ const getCommentsSchema = (
     if (tag.type) {
       if (tag.type.match(regexArray)) {
         type = tag.type.replace(regexArray, "$1");
+        arrayDefaults = regexArray.exec(tag.type)[2].split(",");
         isArray = true;
       } else if (tag.type.match(regexEnum)) {
         enumItems = regexEnum.exec(tag.type)[1].split(",");
@@ -162,6 +165,7 @@ const getCommentsSchema = (
       comment.isArray = true;
       comment.type = "array" as JSONSchema4TypeName;
       comment.items = {};
+      comment.arrayDefaults = arrayDefaults;
 
       if (isExternalref) {
         comment.items.$ref = type;
@@ -235,13 +239,13 @@ const extractValuesFromTree = (
 
       scalar.type = ["object"];
 
-      if (node.value?.type === "block-seq") {
-        scalar.type = ["array"];
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        scalar.items = node.value.items.flatMap((item: any) => {
-          return item.value?.source;
-        });
-      }
+      // if (node.value?.type === "block-seq") {
+      //   scalar.type = ["array"];
+      //   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      //   scalar.items = node.value.items.flatMap((item: any) => {
+      //     return item.value?.source;
+      //   });
+      // }
     }
     values.push(scalar);
   }
@@ -350,6 +354,7 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
 
   if (node.comment?.isArray) {
     schema.type = "array";
+    schema.default = node.comment?.arrayDefaults;
   } else if (node.comment?.isEnum) {
     schema.enum = node.comment?.enumItems;
   } else if (node.comment?.isPattern) {
@@ -381,9 +386,9 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
     schema.description = node.comment.description;
   }
 
-  if (schema.type === "array") {
-    schema.default = node.items;
-  }
+  // if (schema.type === "array") {
+  //   schema.default = node.items;
+  // }
   if (node.value) {
     if (node.value.replace(/^\"\"$/, "").length) {
       schema.default = node.value.replace(/^\"\"$/, "");

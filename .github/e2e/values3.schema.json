@@ -47,16 +47,17 @@
     },
     "syncOptions": {
       "type": "array",
+      "default": [
+        "CreateNamespace=true",
+        "Prune=false",
+        "SkipDryRunOnMissingResource=true"
+      ],
       "title": "Options allow you to specify whole app sync-options",
       "items": {
         "type": [
           "string"
         ]
-      },
-      "default": [
-        "CreateNamespace=true",
-        "test=4"
-      ]
+      }
     }
   }
 }
