@@ -26,6 +26,8 @@ name: JSONSchemaGenerator
 replicaCount: 3
 # @param {string{minLength=10,maxLength=15}} username Username with limited length range
 username: banshee86vr
+# @param {string[CreateNamespace=true,Prune=false,SkipDryRunOnMissingResource=true]} syncOptions Options allow you to specify whole app sync-options
+syncOptions: []
 
 # Setup your securityContext to reduce security risks, see https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 # @param {https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0/_definitions.json#/definitions/io.k8s.api.core.v1.PodSecurityContext} [securityContext]
@@ -54,26 +56,11 @@ You get such JSON schema in result :
 {
   "type": "object",
   "$schema": "http://json-schema.org/draft-07/schema",
-  "required": [
-    "pullPolicy",
-    "name",
-    "replicaCount",
-    "username"
-  ],
+  "required": ["pullPolicy", "name", "replicaCount", "username"],
   "properties": {
     "pullPolicy": {
-      "type": [
-        "string",
-        "boolean",
-        "number",
-        "object",
-        "array"
-      ],
-      "enum": [
-        "IfNotPresent",
-        "Always",
-        "Never"
-      ],
+      "type": ["string", "boolean", "number", "object", "array"],
+      "enum": ["IfNotPresent", "Always", "Never"],
       "title": "Specifies whether a container image should be created",
       "default": "IfNotPresent"
     },
@@ -96,6 +83,18 @@ You get such JSON schema in result :
       "maxLength": 15,
       "title": "Username with limited length range",
       "default": "banshee86vr"
+    },
+    "syncOptions": {
+      "type": "array",
+      "default": [
+        "CreateNamespace=true",
+        "Prune=false",
+        "SkipDryRunOnMissingResource=true"
+      ],
+      "title": "Options allow you to specify whole app sync-options",
+      "items": {
+        "type": ["string"]
+      }
     }
   }
 }
