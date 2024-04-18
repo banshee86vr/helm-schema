@@ -1,4 +1,4 @@
-# @bertelli.luca/helm-schema ![npm (scoped)](https://img.shields.io/npm/v/%40bertelli.luca/helm-schema)
+# @bertelli.luca/helm-schema ![npm (scoped)](https://img.shields.io/npm/v/%40bertelli.luca/helm-schema) [![Publish demo](https://github.com/banshee86vr/helm-schema/actions/workflows/demo.yaml/badge.svg)](https://github.com/banshee86vr/helm-schema/actions/workflows/demo.yaml) [![Tests n publish](https://github.com/banshee86vr/helm-schema/actions/workflows/tests.yaml/badge.svg)](https://github.com/banshee86vr/helm-schema/actions/workflows/tests.yaml)
 
 [JSON Schema](https://json-schema.org) generator for your [HELM charts](https://helm.sh).
 
