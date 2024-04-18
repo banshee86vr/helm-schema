@@ -6,5 +6,5 @@ name: JSONSchemaGenerator
 replicaCount: 3
 # @param {string{minLength=10,maxLength=15}} username Username with limited length range
 username: banshee86vr
-# @param {string[CreateNamespace=true,Prune=false,SkipDryRunOnMissingResource=true]} syncOptions Options allow you to specify whole app sync-options
+# @param {string[CreateNamespace=true,Prune=false,SkipDryRunOnMissingResource=true]} [syncOptions] Options allow you to specify whole app sync-options
 syncOptions: []

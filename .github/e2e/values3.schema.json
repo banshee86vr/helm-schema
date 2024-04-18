@@ -5,8 +5,7 @@
     "pullPolicy",
     "name",
     "replicaCount",
-    "username",
-    "syncOptions"
+    "username"
   ],
   "properties": {
     "pullPolicy": {
