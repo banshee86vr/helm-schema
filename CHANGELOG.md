@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/banshee86vr/helm-schema/compare/v1.1.0...v1.2.0) (2024-04-18)
+
+
+### Features
+
+* Ability to handle default for array of type string ([#14](https://github.com/banshee86vr/helm-schema/issues/14)) ([b424201](https://github.com/banshee86vr/helm-schema/commit/b42420151a58b3c02573350016906e8afa6e0be8))
+
 # [1.1.0](https://github.com/banshee86vr/helm-schema/compare/v1.0.1...v1.1.0) (2024-04-18)
 
 
