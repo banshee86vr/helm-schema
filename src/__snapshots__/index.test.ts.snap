@@ -22,6 +22,7 @@ exports[`extractValues: JSDoc with ref array 1`] = `
   {
     "comment": {
       "description": "",
+      "isArray": true,
       "items": {
         "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0/_definitions.json#/definitions/io.k8s.api.core.v1.EnvFromSource",
       },
@@ -39,6 +40,7 @@ exports[`extractValues: JSDoc with string array 1`] = `
   {
     "comment": {
       "description": "",
+      "isArray": true,
       "items": {
         "type": [
           "string",
@@ -314,6 +316,7 @@ exports[`toJsonSchema: JSDoc with ref array 1`] = `
   "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
     "envFrom": {
+      "default": undefined,
       "items": {
         "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0/_definitions.json#/definitions/io.k8s.api.core.v1.EnvFromSource",
       },
@@ -332,6 +335,7 @@ exports[`toJsonSchema: JSDoc with string array 1`] = `
   "$schema": "http://json-schema.org/draft-07/schema",
   "properties": {
     "command": {
+      "default": undefined,
       "items": {
         "type": [
           "string",
@@ -394,6 +398,7 @@ exports[`toJsonSchema: YAML with external references 1`] = `
     "securityContext": {
       "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0/_definitions.json#/definitions/io.k8s.api.core.v1.PodSecurityContext",
       "description": "Setup your securityContext to reduce security risks, see https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
+      "type": undefined,
     },
   },
   "required": [
