@@ -1,6 +1,6 @@
 import { Parser } from "yaml";
 import { parse as commentParser } from "comment-parser";
-import {
+import type {
   Token,
   CollectionItem,
   BlockSequence,
@@ -8,8 +8,9 @@ import {
   Document,
   FlowCollection,
   SourceToken,
+  FlowScalar,
 } from "yaml/dist/parse/cst";
-import {
+import type {
   JSONSchema4,
   JSONSchema4Object,
   JSONSchema4TypeName,
@@ -24,6 +25,8 @@ interface ParsedComment {
   $ref?: string;
   required: boolean;
   items?: JSONSchema4Object;
+  isArray?: boolean;
+  arrayDefaults?: string[];
   isEnum?: boolean;
   enumItems?: string[];
   isPattern?: boolean;
@@ -42,13 +45,17 @@ interface YamlScalar {
   required?: boolean;
   offset: number;
   key: string;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   value: any;
   children?: YamlScalar[];
   parent?: Token;
   comment?: ParsedComment;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  items?: any[];
 }
 
 function hasSep(
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   object: any
 ): object is
   | CollectionItem
@@ -61,6 +68,7 @@ function hasSep(
 const hasKey = hasSep;
 
 function hasValue(
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   object: any
 ): object is
   | CollectionItem
@@ -72,6 +80,7 @@ function hasValue(
 }
 
 function hasItems(
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   object: any
 ): object is BlockMap | BlockSequence | FlowCollection {
   return "items" in object;
@@ -95,31 +104,32 @@ const getCommentsSchema = (
     .map((line) => line.description)
     .filter(Boolean)
     .join("\n");
-  if (lastLine && lastLine.tags && lastLine.tags.length) {
+  if (lastLine?.tags?.length) {
     const tag = lastLine.tags[0];
 
-    let type;
+    let type: string;
     let isArray = false;
     let isEnum = false;
     let isPattern = false;
     let isIntegerRange = false;
     let isLengthRange = false;
-    let pattern;
-    let enumItems : string[] = [];
+    let pattern: string;
+    let enumItems: string[] = [];
+    let arrayDefaults: string[] = [];
     let minimum: number;
     let maximum: number;
     let minLength: number;
     let maxLength: number;
-    let regexArray = /^(.*)\[\]$/g;
-    let regexEnum = /^enum\{(.*)\}$/g;
-    let regexPattern = /^pattern\{(.*)\}$/g;
-    let regexIntegerRange = /^integer\{min=(\d+),max=(\d+)\}$/g;
-    let regexLengthRange = /^string\{minLength=(\d+),maxLength=(\d+)\}$/g;
+    const regexArray = /^(.*)\[(.*)\]$/g;
+    const regexEnum = /^enum\{(.*)\}$/g;
+    const regexPattern = /^pattern\{(.*)\}$/g;
+    const regexIntegerRange = /^integer\{min=(\d+),max=(\d+)\}$/g;
+    const regexLengthRange = /^string\{minLength=(\d+),maxLength=(\d+)\}$/g;
 
     if (tag.type) {
-
       if (tag.type.match(regexArray)) {
         type = tag.type.replace(regexArray, "$1");
+        arrayDefaults = regexArray.exec(tag.type)[2].split(",");
         isArray = true;
       } else if (tag.type.match(regexEnum)) {
         enumItems = regexEnum.exec(tag.type)[1].split(",");
@@ -128,12 +138,12 @@ const getCommentsSchema = (
         pattern = regexPattern.exec(tag.type)[1];
         isPattern = true;
       } else if (tag.type.match(regexIntegerRange)) {
-        let groups = regexIntegerRange.exec(tag.type);
+        const groups = regexIntegerRange.exec(tag.type);
         minimum = +groups[1];
         maximum = +groups[2];
         isIntegerRange = true;
       } else if (tag.type.match(regexLengthRange)) {
-        let groups = regexLengthRange.exec(tag.type);
+        const groups = regexLengthRange.exec(tag.type);
         minLength = +groups[1];
         maxLength = +groups[2];
         isLengthRange = true;
@@ -141,7 +151,7 @@ const getCommentsSchema = (
         type = tag.type.replace(/^(.*)$/g, "$1");
       }
     }
-    
+
     const isExternalref = type && !!type.match(/^https?:\/\//);
     const name = lastLine?.source[0]?.tokens?.name || tag.name; // check if optiona [name]
 
@@ -152,8 +162,10 @@ const getCommentsSchema = (
     };
 
     if (isArray) {
+      comment.isArray = true;
       comment.type = "array" as JSONSchema4TypeName;
       comment.items = {};
+      comment.arrayDefaults = arrayDefaults;
 
       if (isExternalref) {
         comment.items.$ref = type;
@@ -162,19 +174,19 @@ const getCommentsSchema = (
           type &&
           (type.replace(/(.*)\?$/, "$1").split(",") as JSONSchema4TypeName[]); // remove question mark
       }
-    } else if (isEnum){
+    } else if (isEnum) {
       comment.isEnum = true;
       comment.enumItems = enumItems;
-    } else if (isPattern){
+    } else if (isPattern) {
       comment.type = "string" as JSONSchema4TypeName;
       comment.isPattern = true;
       comment.pattern = pattern;
-    } else if (isIntegerRange){
+    } else if (isIntegerRange) {
       comment.type = "integer" as JSONSchema4TypeName;
       comment.isIntegerRange = true;
       comment.minimum = minimum;
       comment.maximum = maximum;
-    } else if (isLengthRange){
+    } else if (isLengthRange) {
       comment.type = "string" as JSONSchema4TypeName;
       comment.isLengthRange = true;
       comment.minLength = minLength;
@@ -224,12 +236,22 @@ const extractValuesFromTree = (
         n.parent = node;
         return extractValuesFromTree(root, n);
       });
+
       scalar.type = ["object"];
+
+      // if (node.value?.type === "block-seq") {
+      //   scalar.type = ["array"];
+      //   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      //   scalar.items = node.value.items.flatMap((item: any) => {
+      //     return item.value?.source;
+      //   });
+      // }
     }
     values.push(scalar);
   }
 
   if (hasValue(node) && hasItems(node.value) && node.value.items.length) {
+    // biome-ignore lint/complexity/noForEach: <explanation>
     node.value.items.forEach((item) => {
       // @ts-ignore
       if (!item.parent) {
@@ -239,14 +261,16 @@ const extractValuesFromTree = (
       }
     });
   }
+
   return values;
 };
 
 const getComments = (nodes: (Token | SourceToken)[], offset: number) => {
   const remaining = nodes.filter((node) => node.offset < offset);
-  let comments: SourceToken[] = [];
+  const comments: SourceToken[] = [];
   let lastType: string;
   let finished = false;
+  // biome-ignore lint/complexity/noForEach: <explanation>
   remaining.reverse().forEach((node) => {
     if (finished) {
       return;
@@ -270,10 +294,11 @@ const addCommentsSchemas = (
   values: YamlScalar[],
   nodes: (Token | SourceToken)[]
 ): void => {
+  // biome-ignore lint/complexity/noForEach: <explanation>
   values.forEach((value) => {
     if (value.offset) {
       const comments = getComments(nodes, value.offset);
-      if (comments && comments.length) {
+      if (comments?.length) {
         value.comment = getCommentsSchema(comments);
       }
     }
@@ -284,6 +309,7 @@ const addCommentsSchemas = (
 };
 
 const cleanUp = (values: YamlScalar[]) => {
+  // biome-ignore lint/complexity/noForEach: <explanation>
   values.forEach((value) => {
     value.offset = undefined;
     if (value.children.length === 0) {
@@ -316,6 +342,7 @@ export const extractValues = (yaml: string) => {
 };
 
 // @ts-ignore
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const detectType = (some: any) =>
   ["string", "boolean", "number", "object", "array"] as JSONSchema4TypeName[];
 
@@ -325,8 +352,11 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
     ...rootProps,
   };
 
-  if (node.comment?.isEnum) {
-    schema.enum = node.comment?.enumItems
+  if (node.comment?.isArray) {
+    schema.type = "array";
+    schema.default = node.comment?.arrayDefaults;
+  } else if (node.comment?.isEnum) {
+    schema.enum = node.comment?.enumItems;
   } else if (node.comment?.isPattern) {
     schema.type = "string";
     schema.pattern = node.comment?.pattern;
@@ -347,7 +377,7 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
   }
   if (node.comment?.$ref) {
     schema.$ref = node.comment.$ref;
-    delete schema.type;
+    schema.type = undefined;
   }
   if (node.comment?.items) {
     schema.items = node.comment.items;
@@ -355,6 +385,10 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
   if (node.comment?.description) {
     schema.description = node.comment.description;
   }
+
+  // if (schema.type === "array") {
+  //   schema.default = node.items;
+  // }
   if (node.value) {
     if (node.value.replace(/^\"\"$/, "").length) {
       schema.default = node.value.replace(/^\"\"$/, "");
@@ -368,6 +402,7 @@ const nodeToJsonSchema = (node: YamlScalar, rootProps = {}): JSONSchema4 => {
       .map((c) => c.key);
     schema.properties = node.children.reduce(
       (a, c) => ({
+        // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
         ...a,
         [c.key]: nodeToJsonSchema(c),
       }),

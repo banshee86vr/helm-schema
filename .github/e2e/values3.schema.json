@@ -5,7 +5,8 @@
     "pullPolicy",
     "name",
     "replicaCount",
-    "username"
+    "username",
+    "syncOptions"
   ],
   "properties": {
     "pullPolicy": {
@@ -43,6 +44,20 @@
       "maxLength": 15,
       "title": "Username with limited length range",
       "default": "banshee86vr"
+    },
+    "syncOptions": {
+      "type": "array",
+      "default": [
+        "CreateNamespace=true",
+        "Prune=false",
+        "SkipDryRunOnMissingResource=true"
+      ],
+      "title": "Options allow you to specify whole app sync-options",
+      "items": {
+        "type": [
+          "string"
+        ]
+      }
     }
   }
 }

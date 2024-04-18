@@ -321,6 +321,9 @@
     },
     "tolerations": {
       "type": "array",
+      "default": [
+        ""
+      ],
       "items": {
         "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration"
       }
