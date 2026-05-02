@@ -3,5 +3,12 @@
   "extends": [
     "github>banshee86vr/renovate-preset//with-socialgouv.json",
     "github>banshee86vr/renovate-preset//no-tests.json"
+  ],
+  "packageRules": [
+    {
+      "description": "No PRs for patch-only updates; minor and major only",
+      "matchUpdateTypes": ["patch"],
+      "enabled": false
+    }
   ]
 }
