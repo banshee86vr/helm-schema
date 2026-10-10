@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ChangeEventHandler } from "react";
 import { GithubForkBanner } from "react-github-fork-banner";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 
@@ -39,7 +39,7 @@ function App() {
     JSON.stringify(toJsonSchema(yaml), null, 2)
   );
 
-  const onYamlChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+  const onYamlChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     const content = e.target.value;
     setSchema(JSON.stringify(toJsonSchema(content), null, 2));
   };

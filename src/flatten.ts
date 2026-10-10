@@ -1,11 +1,10 @@
-import { Parser } from "yaml";
-import {
-  BlockMap,
-  SourceToken,
-  Document,
-  Token,
-  BlockSequence,
-} from "yaml/dist/parse/cst";
+import { Parser, type CST } from "yaml";
+
+type BlockMap = CST.BlockMap;
+type SourceToken = CST.SourceToken;
+type Document = CST.Document;
+type Token = CST.Token;
+type BlockSequence = CST.BlockSequence;
 
 export const flattenBlock = (blockMap: BlockMap | BlockSequence) => {
   const nodes: (SourceToken | Token)[] = [];
