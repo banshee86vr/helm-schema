@@ -1,15 +1,14 @@
-import { Parser } from "yaml";
+import { Parser, type CST } from "yaml";
 import { parse as commentParser } from "comment-parser";
-import type {
-  Token,
-  CollectionItem,
-  BlockSequence,
-  BlockMap,
-  Document,
-  FlowCollection,
-  SourceToken,
-  FlowScalar,
-} from "yaml/dist/parse/cst";
+
+type Token = CST.Token;
+type CollectionItem = CST.CollectionItem;
+type BlockSequence = CST.BlockSequence;
+type BlockMap = CST.BlockMap;
+type Document = CST.Document;
+type FlowCollection = CST.FlowCollection;
+type SourceToken = CST.SourceToken;
+type FlowScalar = CST.FlowScalar;
 import type {
   JSONSchema4,
   JSONSchema4Object,
